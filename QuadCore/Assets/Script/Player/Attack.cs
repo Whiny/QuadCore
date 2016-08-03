@@ -59,9 +59,9 @@ public class Attack : MonoBehaviour
 	{
 		if (other.tag == "player")
 		{
-			if (/*플레이어가 공격상태이면*/)
+			if (/*플레이어가 공격상태이면*/true)
 			{
-				other.GetComponent<PlayerControl>().Damaged(currentSwingIsPower);
+				//other.GetComponent<PlayerControl>().Damaged(currentSwingIsPower);
 			}
 		}
 	}
