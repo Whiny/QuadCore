@@ -55,14 +55,14 @@ public class Attack : MonoBehaviour
 
 	}
 
-	void OnTriggerEnter2D(Collider2D other)
+	/*void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.tag == "player")
 		{
-			if (/*플레이어가 공격상태이면*/)
+			if (플레이어가 공격상태이면)
 			{
 				other.GetComponent<PlayerControl>().Damaged(currentSwingIsPower);
 			}
 		}
-	}
+	}*/
 }
