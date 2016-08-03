@@ -150,12 +150,14 @@ public class PlayerControl : MonoBehaviour
 
 	public void Damaged(int power,bool throwRight)
 	{
-		stunTimer = 0.7f;
+		stunTimer = power * 0.15f;
 
 		if(throwRight)
 			GetComponent<Rigidbody2D>().velocity = new Vector2(1 * power, 1 * power);
 		else
 			GetComponent<Rigidbody2D>().velocity = new Vector2(-1 * power, 1 * power);
+
+		isJumpping = true;
 	}
 }
 
