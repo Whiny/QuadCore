@@ -1,0 +1,7 @@
+sceneSetups:
+- path: Assets/QuadCore.unity
+  isLoaded: 1
+  isActive: 1
+- path: Assets/Assets/Level/Main.unity
+  isLoaded: 1
+  isActive: 0
