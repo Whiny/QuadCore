@@ -3,10 +3,11 @@ using System.Collections;
 
 public class RotationMove : MonoBehaviour {
 
-   public float agularSpeed;
-   public Transform groundPosition;
-   public GameObject groundPrefab;
-   private Vector3 direction;
+   public float agularSpeed; // 각속도
+   public Transform groundPosition; // 땅 위치
+   public GameObject groundPrefab; // 땅 프리팹
+
+   private Vector3 direction; public Vector3 Direction { get { return direction; } set { direction = value; }} // 방향
 
    void Start()
    {

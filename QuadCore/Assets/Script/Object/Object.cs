@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Object : MonoBehaviour
 {
-    private bool isPlayerOn; public bool IsPlayerOn{ get{return isPlayerOn;} set{ isPlayerOn = value;}}
+    private bool isPlayerOn; public bool IsPlayerOn{ get{return isPlayerOn;} set{ isPlayerOn = value;}} // 플레이어 충돌?
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
@@ -13,5 +13,5 @@ public abstract class Object : MonoBehaviour
         }
     }
 
-    protected abstract void Active(Collider2D other);
+    protected abstract void Active(Collider2D other); // 효과 작동
 }
