@@ -14,7 +14,9 @@ public class PlayerControl : MonoBehaviour
 	private float jump;
 	private bool isStun;
 	private bool isPlaying;
-	private bool isJumpping;
+	public bool isJumpping;
+	private bool isCharging;
+	public bool isCharged;
 
 	void Start ()
 	{
@@ -26,21 +28,47 @@ public class PlayerControl : MonoBehaviour
 		isStun = false;
 		isJumpping = false;
 		isPlaying = true;
+		isCharging = false;
+		isCharged = false;
 	}
 	
 	void FixedUpdate ()
 	{
+		if (Input.GetButtonDown(p_Name + "_A Button"))
+		{
+			isCharging = true;
+			Attack();
+		}
+
+		if (Input.GetButtonUp(p_Name + "_A Button"))
+		{
+			isCharging = false;
+			if (isCharged)
+			{
+				Attack();
+
+				time = 0;
+				isCharged = false;
+			}
+		}
+
+		if (isCharging) time += Time.deltaTime;
+		if (time >= 2) isCharged = true;
+
 		Move();
+		SetAnimation();
 	}
 
 	private void Move()
 	{
 		float tempValue = Input.GetAxis(p_Name + "_LeftThumbstickButton");
-		//Debug.Log(Input.GetAxis(p_Name + "_LeftThumbstickButton"));
+
 		if (!isJumpping && Input.GetAxis(p_Name + "_B Button") == 1)
 		{
 			isJumpping = true;
-			anim.SetTrigger("P1_Jump");
+
+			if (!isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
+			else if (isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 		}
 
@@ -58,31 +86,41 @@ public class PlayerControl : MonoBehaviour
 
 		else direction = 0; // 정지
 
-		/*if (isDash)
-		{
-			GetComponent<Rigidbody2D>().velocity = new Vector2(forwardValue * speed, GetComponent<Rigidbody2D>().velocity.y);
-			speed = 300;
-			isDash = false;
-		}*/
-
 		GetComponent<Rigidbody2D>().velocity = new Vector2(direction * speed, GetComponent<Rigidbody2D>().velocity.y);
-		SetAnimation();
-
 		transform.eulerAngles = new Vector3(0, angle, 0);
+	}
+
+	private void Attack()
+	{
+		if (!isJumpping)
+		{
+			anim.SetTrigger(p_Name + "_Attack"); // 일반 공격
+			anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
+		}
+
+		else
+		{
+			anim.SetTrigger(p_Name + "_JumpAttack"); // 점프 공격
+			anim.SetTrigger(p_Name + "_Jump"); // 점프
+		}
 	}
 
 	private void SetAnimation()
 	{
 		if (direction != 0)
 		{
-			if (!isJumpping) anim.SetTrigger("P1_Walk");
-			else anim.SetTrigger("P1_Jump");
+			if (!isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Walk"); // 일반 걸음
+			else if (!isJumpping && isCharged) anim.SetTrigger(p_Name + "_ChargingWalk"); // 차징 걸음
+			else if (isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
+			else if (isJumpping && isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
 		}
 
 		else
 		{
-			if (!isJumpping) anim.SetTrigger("P1_Stand");
-			else anim.SetTrigger("P1_Jump");
+			if (!isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
+			else if (!isJumpping && isCharged) anim.SetTrigger(p_Name + "_ChargingStand"); // 차징 스탠드
+			else if (isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
+			else if (isJumpping && isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
 		}
 	}
 
@@ -91,7 +129,8 @@ public class PlayerControl : MonoBehaviour
 		if (col.gameObject.tag == "Ground" && isJumpping)
 		{
 			isJumpping = false;
-			anim.SetTrigger("P1_Stand");
+			if (!isCharged) anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
+			else if (isCharged)anim.SetTrigger(p_Name + "_ChargingStand"); // 차징 스텐드
 		}
 	}
 
