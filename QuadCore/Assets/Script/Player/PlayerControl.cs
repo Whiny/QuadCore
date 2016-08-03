@@ -18,6 +18,8 @@ public class PlayerControl : MonoBehaviour
 	private bool isCharging;
 	public bool isCharged;
 
+	private float stunTimer;	//isStun을 대체해주길 바람
+
 	void Start ()
 	{
 		angle = 0;
@@ -30,6 +32,8 @@ public class PlayerControl : MonoBehaviour
 		isPlaying = true;
 		isCharging = false;
 		isCharged = false;
+
+		stunTimer = 0;
 	}
 	
 	void FixedUpdate ()
@@ -52,15 +56,25 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
+		//테스트용
+		if (Input.GetButtonDown(p_Name + "_Y Button"))
+			Damaged(4, true); //일반 공격 테스트
+		if (Input.GetButtonDown(p_Name + "_X Button"))
+			Damaged(10, true); //차징 공격 테스트
+
 		if (isCharging) time += Time.deltaTime;
 		if (time >= 2) isCharged = true;
 
-		Move();
+		//스턴이면 이동불가
+		if (stunTimer < 0) Move();
+		else stunTimer -= Time.deltaTime;
+
 		SetAnimation();
 	}
 
 	private void Move()
 	{
+
 		float tempValue = Input.GetAxis(p_Name + "_LeftThumbstickButton");
 
 		if (!isJumpping && Input.GetAxis(p_Name + "_B Button") == 1)
@@ -134,6 +148,15 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
+	public void Damaged(int power,bool throwRight)
+	{
+		stunTimer = 0.7f;
+
+		if(throwRight)
+			GetComponent<Rigidbody2D>().velocity = new Vector2(1 * power, 1 * power);
+		else
+			GetComponent<Rigidbody2D>().velocity = new Vector2(-1 * power, 1 * power);
+	}
 }
 
 
