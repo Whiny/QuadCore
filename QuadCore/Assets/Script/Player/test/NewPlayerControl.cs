@@ -9,7 +9,7 @@ public class NewPlayerControl : MonoBehaviour
 
 	private int angle;
 	private int direction;
-	private float time;
+	public float time;
 	private float speed;
 	private float jump;
 	private bool isStun;
@@ -40,9 +40,9 @@ public class NewPlayerControl : MonoBehaviour
 	{
 		if (Input.GetButton(p_Name + "_A Button") == true)
 		{
+			Attack();
 			isCharging = true;
 			anim.SetBool("isCharging", true);
-			Attack();
 		}
 		if (Input.GetButton(p_Name + "_A Button") == false)
 		{
@@ -118,7 +118,9 @@ public class NewPlayerControl : MonoBehaviour
 
 	private void Attack()
 	{
-		//anim.SetBool("isAttack", true);
+		Debug.Log("ASDFASDF");
+		anim.SetBool("isAttack", true);
+		anim.SetBool("isAttack", false);
 	}
 
 	private void OnCollisionEnter2D(Collision2D col)

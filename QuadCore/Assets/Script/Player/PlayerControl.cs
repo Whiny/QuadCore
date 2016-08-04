@@ -6,101 +6,125 @@ public class PlayerControl : MonoBehaviour
 {
 	public string p_Name;
 	public Animator anim;
+	public GameObject[] p_DefaultCollider, p_AttackCollider, p_CollisionCollider;
+	public GameObject m_AttackCollider;
 
 	private int angle;
 	private int direction;
-	private float time;
-	private float speed;
-	private float jump;
-	private bool isStun;
+	private float timer_Charging, timer_Stun; // 타이머
+	private float speed, jump, power; // 플레이어 스텟 변수
 	private bool isPlaying;
-	public bool isJumpping;
-	private bool isCharging;
-	public bool isCharged;
-
-	private float stunTimer;	//isStun을 대체해주길 바람
+	private bool isJumpping,isAttack; // 조작 상태 변수
+	private bool isCharging, isCharged, isStunned; // 행동 상태 변수
 
 	void Start ()
 	{
 		angle = 0;
-		time = 0;
 		speed = 2;
 		jump = 6;
-
-		isStun = false;
-		isJumpping = false;
+		power = 2f;
 		isPlaying = true;
-		isCharging = false;
-		isCharged = false;
 
-		stunTimer = 0;
+		timer_Charging = timer_Stun = 0;
+		isJumpping = isAttack = false;
+		isCharging = isCharged = isStunned = false;
+
+		Physics2D.IgnoreCollision(p_DefaultCollider[0].GetComponent<BoxCollider2D>(), p_DefaultCollider[1].GetComponent<BoxCollider2D>(), true);
+		Physics2D.IgnoreCollision(p_AttackCollider[0].GetComponent<PolygonCollider2D>(), p_AttackCollider[1].GetComponent<PolygonCollider2D>(), true);
+		Physics2D.IgnoreCollision(p_CollisionCollider[0].GetComponent<PolygonCollider2D>(), p_CollisionCollider[1].GetComponent<PolygonCollider2D>(), true);
+		m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = false;
 	}
 	
 	void FixedUpdate ()
 	{
-		if (Input.GetButtonDown(p_Name + "_A Button"))
+		if (isAttack)
 		{
+			anim.SetBool("P1_Attack", false);
+			m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = false;
+			isAttack = false;
+		}
+
+		if (Input.GetButton(p_Name + "_A Button") && !isAttack && !isCharging)
+		{
+			isAttack = true;
 			isCharging = true;
+
 			Attack();
 		}
 
-		if (Input.GetButtonUp(p_Name + "_A Button"))
+		else if (!(Input.GetButton(p_Name + "_A Button")))
 		{
-
 			isCharging = false;
-			time = 0;
+			power = 2f;
+			timer_Charging = 0;
 
 			if (isCharged)
 			{
+				isAttack = true;
 				Attack();
 
 				isCharged = false;
+				anim.SetBool("P1_Charged", false);
 			}
 		}
 
-		//테스트용
+		if (isCharging) timer_Charging += Time.deltaTime;
+
+		if (timer_Charging >= 2)
+		{
+			isCharged = true;
+			power *= 2;
+			anim.SetBool("P1_Charged", true);
+		}
+
+		/*//테스트용
 		if (Input.GetButtonDown(p_Name + "_Y Button"))
 			Damaged(4, true); //일반 공격 테스트
 		if (Input.GetButtonDown(p_Name + "_X Button"))
-			Damaged(10, true); //차징 공격 테스트
+			Damaged(10, true); //차징 공격 테스트*/		
 
-		if (isCharging) time += Time.deltaTime;
-		if (time >= 2) isCharged = true;
-
-		//스턴이면 이동불가
-		if (stunTimer < 0) Move();
-		else stunTimer -= Time.deltaTime;
-
-		SetAnimation();
+		if (!isStunned) Move();
+		else if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
+		else isStunned = false;
 	}
 
 	private void Move()
 	{
-
 		float tempValue = Input.GetAxis(p_Name + "_LeftThumbstickButton");
 
-		if (!isJumpping && Input.GetAxis(p_Name + "_B Button") == 1)
+		if (!isJumpping && Input.GetButton(p_Name + "_B Button"))
 		{
 			isJumpping = true;
+			anim.SetBool("P1_Jump", true);
+			anim.SetBool("P1_Walk", false);
 
-			if (!isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
-			else if (isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 		}
 
-		if (tempValue > 0.7) 
+		/* 키 입력 <오른쪽 이동> */
+		if (tempValue > 0.7)
 		{
 			direction = 1;
 			angle = 0;
-		} // 오른쪽
 
-		else if (tempValue < -0.7) 
+			if (!isJumpping) anim.SetBool("P1_Walk", true);
+		}
+
+		/* 키 입력 <왼쪽 이동> */
+		else if (tempValue < -0.7)
 		{
 			direction = -1;
 			angle = 180;
-		} // 왼쪽
 
-		else direction = 0; // 정지
+			if (!isJumpping) anim.SetBool("P1_Walk", true);
+		}
+
+		/* 정지 상태 */
+		else
+		{
+			direction = 0;
+			anim.SetBool("P1_Walk", false);
+		}
 
 		GetComponent<Rigidbody2D>().velocity = new Vector2(direction * speed, GetComponent<Rigidbody2D>().velocity.y);
 		transform.eulerAngles = new Vector3(0, angle, 0);
@@ -108,36 +132,21 @@ public class PlayerControl : MonoBehaviour
 
 	private void Attack()
 	{
-		if (!isJumpping)
-		{
-			anim.SetTrigger(p_Name + "_Attack"); // 일반 공격
-			anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
-		}
-
-		else
-		{
-			anim.SetTrigger(p_Name + "_JumpAttack"); // 점프 공격
-			anim.SetTrigger(p_Name + "_Jump"); // 점프
-		}
+		m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = true;
+		anim.SetBool("P1_Attack", true);
 	}
 
-	private void SetAnimation()
+	//힘의 크기와 방향(좌우)
+	private void Damaged(float power, int direction, string name)
 	{
-		if (direction != 0)
+		if (name != "CollisionCollider")
 		{
-			if (!isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Walk"); // 일반 걸음
-			else if (!isJumpping && isCharged) anim.SetTrigger(p_Name + "_ChargingWalk"); // 차징 걸음
-			else if (isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
-			else if (isJumpping && isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
+			isStunned = true;
+			timer_Stun = power * 0.15f;
+			GetComponent<Rigidbody2D>().velocity = new Vector2(direction * power, 1 * power);
 		}
 
-		else
-		{
-			if (!isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
-			else if (!isJumpping && isCharged) anim.SetTrigger(p_Name + "_ChargingStand"); // 차징 스탠드
-			else if (isJumpping && !isCharged) anim.SetTrigger(p_Name + "_Jump"); // 일반 점프
-			else if (isJumpping && isCharged) anim.SetTrigger(p_Name + "_JumpCharging"); // 차징 점프
-		}
+		//isJumpping = true;
 	}
 
 	private void OnCollisionEnter2D(Collision2D col)
@@ -145,23 +154,28 @@ public class PlayerControl : MonoBehaviour
 		if (col.gameObject.tag == "Ground" && isJumpping)
 		{
 			isJumpping = false;
-			if (!isCharged) anim.SetTrigger(p_Name + "_Stand"); // 일반 스탠드
-			else if (isCharged)anim.SetTrigger(p_Name + "_ChargingStand"); // 차징 스텐드
+			anim.SetBool("P1_Jump", false);
 		}
 	}
 
-	//힘의 크기와 방향(좌우)
-	public void Damaged(int power,bool throwRight)
+	private void OnTriggerEnter2D(Collider2D col)
 	{
-		stunTimer = power * 0.15f;
+		if (col.gameObject.tag == "Player")
+		{
+			if (col.gameObject.name == "CollisionCollider")
+			{
+				col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, direction, col.gameObject.name);
+			}
+		}
+	}
 
-		if(throwRight)
-			GetComponent<Rigidbody2D>().velocity = new Vector2(1 * power, 1 * power);
-		else
-			GetComponent<Rigidbody2D>().velocity = new Vector2(-1 * power, 1 * power);
+	public float GetPower()
+	{
+		return this.power;
+	}
 
-		isJumpping = true;
+	public int GetDirection()
+	{
+		return this.direction;
 	}
 }
-
-
