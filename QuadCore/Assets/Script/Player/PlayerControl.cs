@@ -46,12 +46,14 @@ public class PlayerControl : MonoBehaviour
 
 		if (Input.GetButtonUp(p_Name + "_A Button"))
 		{
+
 			isCharging = false;
+			time = 0;
+
 			if (isCharged)
 			{
 				Attack();
 
-				time = 0;
 				isCharged = false;
 			}
 		}
@@ -148,6 +150,7 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
+	//힘의 크기와 방향(좌우)
 	public void Damaged(int power,bool throwRight)
 	{
 		stunTimer = power * 0.15f;
