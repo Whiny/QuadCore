@@ -17,11 +17,11 @@ public class PlayerControl : MonoBehaviour
 	private bool isCharging, isCharged, isStunned; // 행동 상태 변수
 
 	protected int direction; // 플레이어 방향값
-	protected float power;
+	private float power;
 
 	void Awake()
 	{
-		power = 2f;
+		power = 4f;
 	}
 
 	void Start ()
@@ -43,14 +43,19 @@ public class PlayerControl : MonoBehaviour
 	
 	void FixedUpdate ()
 	{
-		if (isAttack)
+		if (!isAttack)
+		{
+			m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = false;
+			power = 4f;
+		}
+
+		else if (isAttack && !isStunned)
 		{
 			anim.SetBool("P1_Attack", false);
-			m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = false;
 			isAttack = false;
 		}
 
-		if (Input.GetButton(p_Name + "_A Button") && !isAttack && !isCharging)
+		if (Input.GetButton(p_Name + "_A Button") && !isAttack && !isCharging && !isStunned)
 		{
 			isAttack = true;
 			isCharging = true;
@@ -61,7 +66,6 @@ public class PlayerControl : MonoBehaviour
 		else if (!(Input.GetButton(p_Name + "_A Button")))
 		{
 			isCharging = false;
-			power = 2f;
 			timer_Charging = 0;
 
 			if (isCharged)
@@ -76,12 +80,15 @@ public class PlayerControl : MonoBehaviour
 
 		if (isCharging) timer_Charging += Time.deltaTime;
 
-		if (timer_Charging >= 2)
+		if ((timer_Charging >= 2) && !isCharged)
 		{
 			isCharged = true;
 			power *= 2;
 			anim.SetBool("P1_Charged", true);
-		}	
+		}
+
+		if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
+		else isStunned = false;
 
 		if (!isStunned) Move();
 		else if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
@@ -139,8 +146,14 @@ public class PlayerControl : MonoBehaviour
 	public void Damaged(float power, int direction)
 	{
 		isStunned = true;
-		timer_Stun = power * 0.15f;
+		timer_Stun = power * 0.25f;
 		GetComponent<Rigidbody2D>().velocity = new Vector2(direction * power, 1 * power);
+
+		Debug.Log(direction * power);
+
+		isCharging = false;
+		isCharged = false;
+		timer_Charging = 0;
 	}
 
 	private void OnCollisionEnter2D(Collision2D col)
@@ -162,6 +175,19 @@ public class PlayerControl : MonoBehaviour
 		set
 		{
 			angle = value;
+		}
+	}
+
+	public float Power
+	{
+		get
+		{
+			return power;
+		}
+
+		set
+		{
+			power = value;
 		}
 	}
 }

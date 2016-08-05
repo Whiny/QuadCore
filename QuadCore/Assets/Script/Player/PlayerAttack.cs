@@ -23,7 +23,10 @@ public class PlayerAttack : PlayerControl
 		{
 			if (col.gameObject.name == "CollisionCollider")
 			{
+				Debug.Log("ASDF");
 				int angle = root_Object.GetComponent<PlayerControl>().Angle;
+				float power = root_Object.GetComponent<PlayerControl>().Power;
+				root_Object.GetComponent<PlayerControl>().Power = 4f;
 
 				if (angle == 0) col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, 1);
 				else col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, -1);
