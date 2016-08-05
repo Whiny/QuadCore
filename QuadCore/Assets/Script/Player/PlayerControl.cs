@@ -10,19 +10,25 @@ public class PlayerControl : MonoBehaviour
 	public GameObject m_AttackCollider;
 
 	private int angle;
-	private int direction;
 	private float timer_Charging, timer_Stun; // 타이머
-	private float speed, jump, power; // 플레이어 스텟 변수
+	private float speed, jump; // 플레이어 이동 변수
 	private bool isPlaying;
 	private bool isJumpping,isAttack; // 조작 상태 변수
 	private bool isCharging, isCharged, isStunned; // 행동 상태 변수
+
+	protected int direction; // 플레이어 방향값
+	protected float power;
+
+	void Awake()
+	{
+		power = 2f;
+	}
 
 	void Start ()
 	{
 		angle = 0;
 		speed = 2;
 		jump = 6;
-		power = 2f;
 		isPlaying = true;
 
 		timer_Charging = timer_Stun = 0;
@@ -75,13 +81,7 @@ public class PlayerControl : MonoBehaviour
 			isCharged = true;
 			power *= 2;
 			anim.SetBool("P1_Charged", true);
-		}
-
-		/*//테스트용
-		if (Input.GetButtonDown(p_Name + "_Y Button"))
-			Damaged(4, true); //일반 공격 테스트
-		if (Input.GetButtonDown(p_Name + "_X Button"))
-			Damaged(10, true); //차징 공격 테스트*/		
+		}	
 
 		if (!isStunned) Move();
 		else if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
@@ -136,17 +136,11 @@ public class PlayerControl : MonoBehaviour
 		anim.SetBool("P1_Attack", true);
 	}
 
-	//힘의 크기와 방향(좌우)
-	private void Damaged(float power, int direction, string name)
+	public void Damaged(float power, int direction)
 	{
-		if (name != "CollisionCollider")
-		{
-			isStunned = true;
-			timer_Stun = power * 0.15f;
-			GetComponent<Rigidbody2D>().velocity = new Vector2(direction * power, 1 * power);
-		}
-
-		//isJumpping = true;
+		isStunned = true;
+		timer_Stun = power * 0.15f;
+		GetComponent<Rigidbody2D>().velocity = new Vector2(direction * power, 1 * power);
 	}
 
 	private void OnCollisionEnter2D(Collision2D col)
@@ -158,24 +152,16 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerEnter2D(Collider2D col)
+	public int Angle
 	{
-		if (col.gameObject.tag == "Player")
+		get
 		{
-			if (col.gameObject.name == "CollisionCollider")
-			{
-				col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, direction, col.gameObject.name);
-			}
+			return angle;
 		}
-	}
 
-	public float GetPower()
-	{
-		return this.power;
-	}
-
-	public int GetDirection()
-	{
-		return this.direction;
+		set
+		{
+			angle = value;
+		}
 	}
 }
