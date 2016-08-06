@@ -56,7 +56,7 @@ public class CloudGenerator : MonoBehaviour
     void Generate()
     {
         spawn = Instantiate(cloudPrefab[Random.Range(0, cloudPrefab.Length)],new Vector3(transform.position.x,transform.position.y + Random.Range(0,maxHeight) + minHeight, transform.position.z),transform.rotation) as GameObject; // 생성 위치
-        spawn.GetComponent<Transform>().localScale = new Vector3(1, 1, 1) * (Random.RandomRange(0, maxSize) + minSize); // 크기 설정
+        spawn.GetComponent<Transform>().localScale = new Vector3(1, 1, 1) * (Random.Range(0, maxSize) + minSize); // 크기 설정
 
         spawnCloud = spawn.GetComponent<Cloud_Script>();
         spawnCloud.LifeTime = Random.Range(0, maxLifeTime) + minLifeTime; // 생명 시간 설정
@@ -71,7 +71,7 @@ public class CloudGenerator : MonoBehaviour
     {
         Transform cloudTransform = cloud.GetComponent<Transform>();
         cloudTransform.position = new Vector3(transform.position.x, transform.position.y + Random.Range(0, maxHeight) + minHeight, transform.position.z);
-        cloudTransform.localScale = new Vector3(1, 1, 1) * (Random.RandomRange(0, maxSize) + minSize); // 크기 설정
+        cloudTransform.localScale = new Vector3(1, 1, 1) * (Random.Range(0, maxSize) + minSize); // 크기 설정
 
         spawnCloud = cloud.GetComponent<Cloud_Script>();
         spawnCloud.LifeTime = Random.Range(0, maxLifeTime) + minLifeTime; // 생명 시간 설정
