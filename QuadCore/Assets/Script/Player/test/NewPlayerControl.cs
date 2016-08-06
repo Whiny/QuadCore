@@ -176,17 +176,8 @@ public class NewPlayerControl : MonoBehaviour
 		}
 	}
 
-	public int Angle
-	{
-		get {return angle;}
-		set {angle = value;}
-	}
-
-	public float Power
-	{
-		get {return power;}
-		set {power = value;}
-	}
+	public int Angle {get{return angle;} set{angle = value;}}
+	public float Power {get {return power;} set {power = value;}}
 }
 	/*void Update()
 	{
