@@ -53,7 +53,8 @@ public class NewPlayerControl : MonoBehaviour
 
 	void Update()
 	{
-		ControllerInput();
+		if (!(timer_Stun > 0))
+			ControllerInput();
 
 		if (isCharging && !isCharged)
 		{
@@ -109,12 +110,15 @@ public class NewPlayerControl : MonoBehaviour
 			isCharging = false;
 			anim.SetBool("isCharging", false);
 		}
-		if (Input.GetButtonDown(p_Name + "_B Button") || (Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn))
+
+		if (Input.GetButtonDown(p_Name + "_B Button") || ( Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn ))
 		{
 			isTriggerOn = true;
-			if(count_Jump > 0 || (!isFalling && !isJumpping))
+			if(count_Jump > 0)
 				Jump();
 		}
+
+		//트리거를 놓았는지 확인
 		if(isTriggerOn)
 			if (Input.GetAxis(p_Name + "_Triggers") < 0.5f)
 				isTriggerOn = false;
@@ -152,7 +156,9 @@ public class NewPlayerControl : MonoBehaviour
 		GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 		count_Jump--;
 		isJumpping = true;
+		isFalling = false;
 		anim.SetBool("isJumpping", true);
+		anim.SetBool("isFalling", false);
 		defaultCollider.GetComponent<BoxCollider2D>().enabled = false;
 	}
 
