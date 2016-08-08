@@ -13,6 +13,11 @@ public class Portal_Script : Object
 
 	void Start()
     {
+        ColliderSet();
+    }
+
+    void ColliderSet()
+    {
         isExit = false;
         redColider = gameObject.AddComponent<BoxCollider2D>();
         redColider.size = new Vector2(0.277f, 0.35f);
