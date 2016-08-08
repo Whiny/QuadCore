@@ -10,13 +10,13 @@ public class NewPlayerControl : MonoBehaviour
 	public GameObject defaultCollider;
 	public int max_Jump;
 
-	//능력치
+	//플레이어 능력치
 	private int angle;
 	private float speed;
 	private float power;
 	private float jump;
 
-	//상태 여부
+	//플레이어 상태 여부
 	private bool isStun;
 	private bool isPlaying;
 	public bool isJumpping;
@@ -28,6 +28,7 @@ public class NewPlayerControl : MonoBehaviour
 	private float timer_Stun;    //isStun을 대체해주길 바람
 	private float timer_Charging;
 	private int count_Jump;
+	private bool isTriggerOn;
 	void Start()
 	{
 		angle = 0;
@@ -44,8 +45,9 @@ public class NewPlayerControl : MonoBehaviour
 		timer_Stun = 0f;
 		timer_Charging = 0f;
 		count_Jump = max_Jump;
+		isTriggerOn = false;
 
-		attackCollider.GetComponent<PolygonCollider2D>().enabled = false;
+        attackCollider.GetComponent<PolygonCollider2D>().enabled = false;
 		attackCollider.GetComponent<NewPlayerAttack>().enabled = false;
 	}
 
@@ -107,11 +109,15 @@ public class NewPlayerControl : MonoBehaviour
 			isCharging = false;
 			anim.SetBool("isCharging", false);
 		}
-		if (Input.GetButtonDown(p_Name + "_B Button") || Input.GetAxis(p_Name + "_Triggers") > 0.9f)
+		if (Input.GetButtonDown(p_Name + "_B Button") || (Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn))
 		{
+			isTriggerOn = true;
 			if(count_Jump > 0 || (!isFalling && !isJumpping))
 				Jump();
 		}
+		if(isTriggerOn)
+			if (Input.GetAxis(p_Name + "_Triggers") < 0.5f)
+				isTriggerOn = false;
 	}
 
 	private void Move()
@@ -176,7 +182,7 @@ public class NewPlayerControl : MonoBehaviour
 	{
 		if (col.gameObject.tag == "Ground" && (isJumpping || isFalling))
 		{
-			count_Jump = max_Jump;
+			count_Jump = max_Jump; 
 			isJumpping = false;
 			isFalling = false;
 			anim.SetBool("isJumpping", false);
