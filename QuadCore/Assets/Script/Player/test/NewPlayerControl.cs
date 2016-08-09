@@ -78,7 +78,7 @@ public class NewPlayerControl : MonoBehaviour
 			Move();
 
 		//떨어지는 중으로 상태 변경
-		if (GetComponent<Rigidbody2D>().velocity.y < -0.5)
+		if (GetComponent<Rigidbody2D>().velocity.y < -1)
 		{
 			isJumpping = false;
 			isFalling = true;
@@ -186,8 +186,10 @@ public class NewPlayerControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D col)
 	{
+		Debug.Log("Enter");
 		if (col.gameObject.tag == "Ground" && (isJumpping || isFalling))
 		{
+			Debug.Log("in");
 			count_Jump = max_Jump; 
 			isJumpping = false;
 			isFalling = false;
@@ -199,4 +201,9 @@ public class NewPlayerControl : MonoBehaviour
 
 	public int Angle {get{return angle;} set{angle = value;}}
 	public float Power {get {return power;} set {power = value;}}
+	public float StunTimer
+	{
+		get { return timer_Stun; }
+		set { timer_Stun = value; anim.SetFloat("timer_Stun", timer_Stun); }
+	}
 }
