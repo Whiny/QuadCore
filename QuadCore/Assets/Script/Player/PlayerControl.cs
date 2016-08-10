@@ -52,6 +52,7 @@ public class PlayerControl : MonoBehaviour
 	void FixedUpdate ()
 	{
 		Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
+
 		if (isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0)
 		{
 			
@@ -97,6 +98,7 @@ public class PlayerControl : MonoBehaviour
 		if (!isJumpping && Input.GetButtonDown(p_Name + "_B Button"))
 		{
 			isJumpping = true;
+			isIgnored = true;
 			anim.SetBool("P1_Jump", true);
 			anim.SetBool("P1_Walk", false);
 
@@ -191,7 +193,6 @@ public class PlayerControl : MonoBehaviour
 		if (col.gameObject.tag == "Ground" && isJumpping)
 		{
 			isJumpping = false;
-			isIgnored = true;
 			anim.SetBool("P1_Jump", false);
 		}
 	}
