@@ -13,18 +13,25 @@ public class PlayerAttack : MonoBehaviour
 		delay = 0;
 		this.GetComponent<PolygonCollider2D>().enabled = false;
 	}
-	
-	// Update is called once per frame
-	void FixedUpdate ()
-	{
-		if(delay >= 0.1f)
-		{
-			delay = 0;
-			isEnable = false;
 
+	// Update is called once per frame
+	void FixedUpdate()
+	{
+		if (delay >= 0.25)
+		{
+			isEnable = false;
+			delay = 0;
+			root_Object.GetComponent<PlayerControl>().IsAttack = false;
+		}
+
+		else if (delay >= 0.15f)
+		{
 			this.GetComponent<PolygonCollider2D>().enabled = false;
 			root_Object.GetComponent<PlayerControl>().Power = 4;
+
+			root_Object.GetComponent<PlayerControl>().anim.SetBool("P1_Attack", false);
 		}
+
 		if (isEnable) delay += Time.deltaTime;
 	}
 
