@@ -6,20 +6,20 @@ public class PlayerControl : MonoBehaviour
 {
 	public string p_Name;
 	public Animator anim;
-	public GameObject m_AttackCollider, m_DefaultCollider;
+	public GameObject m_AttackCollider, m_DefaultCollider, m_DetectCollider;
 	public GameObject m_Camera;
 	public int angle;
 
-	//private GameObject temp_Collider;
+	private GameObject temp_Collider;
 	private int direction; // 플레이어 방향값
 	private int jump_MAX, jump_Count;
-	private float timer_Charging, timer_Stun; // 타이머
+	private float timer_Charging, timer_Stun, time_Detect; // 타이머
 	private float speed, jump; // 플레이어 이동 변수
 	private float power;
 	private bool isPlaying;
 	private bool isJumpping,isAttack, isTriggerOn; // 조작 상태 변수
-	private bool isCharging, isCharged, isStunned, isFalling; // 행동 상태 변수
-	//public bool isIgnored;	
+	private bool isCharging, isCharged, isStunned; // 행동 상태 변수
+	public bool isIgnored;	
 
 	void Start ()
 	{
@@ -30,11 +30,10 @@ public class PlayerControl : MonoBehaviour
 		speed = 2;
 		jump = 6;
 		isPlaying = true;
-		//isIgnored = true;
 
-		timer_Charging = timer_Stun = 0;
+		timer_Charging = timer_Stun = time_Detect = 0;
 		isJumpping = isAttack = isTriggerOn = false;
-		isCharging = isCharged = isStunned = isFalling = false;
+		isCharging = isCharged = isStunned  = false;
 	}
 
 	void Update ()
@@ -53,16 +52,20 @@ public class PlayerControl : MonoBehaviour
 	
 	void FixedUpdate ()
 	{
-		//Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
-
-		if ((GetComponent<Rigidbody2D>().velocity.y < -2) && !isFalling) isFalling = true;
-
-		/*if (isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0)
+		if (time_Detect > 0.2f)
 		{
-			
+			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = false;
 			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = true;
-			isIgnored = false;
-		}*/
+			time_Detect = 0;
+		}
+
+		if ((GetComponent<Rigidbody2D>().velocity.y < 0) && !isIgnored)
+		{
+			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = true;
+			isIgnored = true;
+		}
+
+		if (isIgnored) time_Detect += Time.deltaTime;
 
 		if (!isStunned) Move();
 		else if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
@@ -102,16 +105,15 @@ public class PlayerControl : MonoBehaviour
 		/* 점프 */
 		if ((jump_Count < jump_MAX) && (Input.GetButtonDown(p_Name + "_B Button") || (Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn)))
 		{
-			//isJumpping = true;
-			//isIgnored = true;
+			m_DetectCollider.GetComponent<DetectGround>().Reset();
+			isIgnored = false;
 			isTriggerOn = true;
 			anim.SetBool(p_Name + "_Jump", true);
 			anim.SetBool(p_Name + "_Walk", false);
 			jump_Count++;
 
-			//m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
+			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
-			//Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
 		}
 
 		if (isTriggerOn && Input.GetAxis(p_Name + "_Triggers") < 0.5f) isTriggerOn = false;
@@ -178,8 +180,8 @@ public class PlayerControl : MonoBehaviour
 
 	public void Damaged(float _power, int _direction)
 	{
-		anim.SetBool(p_Name + "_Damaged", true);
 		anim.SetBool(p_Name + "_Charged", false);
+		anim.SetBool(p_Name + "_Damaged", true);
 		isStunned = true;
 		isCharged = false;
 		isCharging = false;
@@ -196,18 +198,12 @@ public class PlayerControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D col)
 	{
-		/*if (!isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0 && col.gameObject.tag == "Ground" && isJumpping)
+		if (col.gameObject.tag == "Ground" && (GetComponent<Rigidbody2D>().velocity.y == 0) && jump_Count != 0)
 		{
-			Physics2D.IgnoreCollision(col.gameObject.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), true);
-			temp_Collider = col.gameObject;
-		}*/
-
-		if (col.gameObject.tag == "Ground" && isFalling)
-		{
-			//isJumpping = false;
 			jump_Count = 0;
-			isFalling = false;
 			anim.SetBool(p_Name + "_Jump", false);
+
+			m_DetectCollider.GetComponent<DetectGround>().Reset();
 		}
 	}
 
