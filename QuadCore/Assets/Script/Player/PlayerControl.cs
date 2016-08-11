@@ -43,7 +43,6 @@ public class PlayerControl : MonoBehaviour
 		if ((timer_Charging >= 2) && !isCharged)
 		{
 			isCharged = true;
-			power *= 2;
 			anim.SetBool(p_Name + "_Charged", true);
 		}
 
@@ -55,7 +54,7 @@ public class PlayerControl : MonoBehaviour
 		if (time_Detect > 0.2f)
 		{
 			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = false;
-			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = true;
+			m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = true;
 			time_Detect = 0;
 		}
 
@@ -84,6 +83,7 @@ public class PlayerControl : MonoBehaviour
 			isAttack = true;
 			isCharging = true;
 
+			power = 4;
 			Attack();
 		}
 
@@ -95,6 +95,8 @@ public class PlayerControl : MonoBehaviour
 			if (isCharged)
 			{
 				isAttack = true;
+
+				power = 12;
 				Attack();
 
 				isCharged = false;
@@ -112,7 +114,7 @@ public class PlayerControl : MonoBehaviour
 			anim.SetBool(p_Name + "_Walk", false);
 			jump_Count++;
 
-			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
+			m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = false;
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 		}
 
@@ -198,7 +200,7 @@ public class PlayerControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D col)
 	{
-		if (col.gameObject.tag == "Ground" && (GetComponent<Rigidbody2D>().velocity.y == 0) && jump_Count != 0)
+		if (col.gameObject.tag == "Ground" )
 		{
 			jump_Count = 0;
 			anim.SetBool(p_Name + "_Jump", false);

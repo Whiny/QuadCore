@@ -18,7 +18,15 @@ public class DetectGround : MonoBehaviour
 
 	public void Reset()
 	{
-		if (temp_Collider != null) Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
+		if (temp_Collider != null)
+		{
+			if (temp_Collider.GetComponent<BoxCollider2D>() != null)
+				Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), false);
+
+			else if (temp_Collider.GetComponent<PolygonCollider2D>() != null)
+				Physics2D.IgnoreCollision(temp_Collider.GetComponent<PolygonCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), false);
+
+		}
 		temp_Collider = null;
 	}
 
@@ -27,7 +35,13 @@ public class DetectGround : MonoBehaviour
 		if (col.gameObject.tag == "Ground")
 		{
 			temp_Collider = col.gameObject;
-			Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), true);
+
+			if (temp_Collider.GetComponent<BoxCollider2D>() != null)
+				Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), true);
+
+			else if (temp_Collider.GetComponent<PolygonCollider2D>() != null)
+				Physics2D.IgnoreCollision(temp_Collider.GetComponent<PolygonCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), true);
+
 			this.GetComponent<PolygonCollider2D>().enabled = false;
 		}
 	}

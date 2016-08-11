@@ -28,7 +28,7 @@ public class PlayerAttack : MonoBehaviour
 		else if (delay >= 0.05f)
 		{
 			this.GetComponent<PolygonCollider2D>().enabled = false;
-			root_Object.GetComponent<PlayerControl>().Power = 4;
+			//root_Object.GetComponent<PlayerControl>().Power = 4;
 
 			root_Object.GetComponent<PlayerControl>().anim.SetBool(p_Name + "_Attack", false);
 		}
