@@ -24,12 +24,17 @@ public class MovingObject : MonoBehaviour
 
     void FixedUpdate()
     {
+        Move();  
+    }
+
+    protected virtual void Move()
+    {
         if (Vector2.Distance(zero, transform.position) < distance)
             rigid.velocity = direction * speed;
         else
         {
             speed *= -1;
-            rigid.velocity = direction * speed;      
-        }           
+            rigid.velocity = direction * speed;
+        }
     }
 }
