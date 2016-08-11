@@ -1,36 +1,59 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerAttack : PlayerControl
+public class PlayerAttack : MonoBehaviour
 {
 	public GameObject root_Object;
 
+	private float delay;
+	private bool isEnable;
+
 	void Start ()
 	{
-	
+		delay = 0;
+		this.GetComponent<PolygonCollider2D>().enabled = false;
 	}
-	
+
 	// Update is called once per frame
-	void FixedUpdate ()
+	void FixedUpdate()
 	{
-	
+		if (delay >= 0.25)
+		{
+			isEnable = false;
+			delay = 0;
+			root_Object.GetComponent<PlayerControl>().IsAttack = false;
+		}
+
+		else if (delay >= 0.15f)
+		{
+			this.GetComponent<PolygonCollider2D>().enabled = false;
+			root_Object.GetComponent<PlayerControl>().Power = 4;
+
+			root_Object.GetComponent<PlayerControl>().anim.SetBool("P1_Attack", false);
+		}
+
+		if (isEnable) delay += Time.deltaTime;
 	}
 
 	private void OnTriggerEnter2D(Collider2D col)
 	{
-		
 		if (col.gameObject.tag == "Player")
 		{
 			if (col.gameObject.name == "CollisionCollider")
 			{
-				Debug.Log("ASDF");
 				int angle = root_Object.GetComponent<PlayerControl>().Angle;
 				float power = root_Object.GetComponent<PlayerControl>().Power;
-				root_Object.GetComponent<PlayerControl>().Power = 4f;
+				Debug.Log(power);
 
 				if (angle == 0) col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, 1);
 				else col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, -1);
 			}
 		}
+	}
+
+	public void DelayOn()
+	{
+		delay = 0;
+		isEnable = true;
 	}
 }

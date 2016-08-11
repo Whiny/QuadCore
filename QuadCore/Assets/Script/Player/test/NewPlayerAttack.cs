@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NewPlayerAttack : PlayerControl
+public class NewPlayerAttack : MonoBehaviour
 {
 	public GameObject root_Object;
 
