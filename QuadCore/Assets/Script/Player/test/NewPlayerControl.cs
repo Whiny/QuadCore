@@ -178,6 +178,12 @@ public class NewPlayerControl : MonoBehaviour
 		timer_Charging = 0;
 	}
 
+	public void Die()
+	{
+		isPlaying = false;
+		transform.gameObject.SetActive(false);
+		Debug.Log(this.name);
+	}
 	private void Attack()
 	{
 		attackCollider.GetComponent<NewPlayerAttack>().enabled = true;
@@ -186,10 +192,8 @@ public class NewPlayerControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D col)
 	{
-		Debug.Log("Enter");
 		if (col.gameObject.tag == "Ground" && (isJumpping || isFalling))
 		{
-			Debug.Log("in");
 			count_Jump = max_Jump; 
 			isJumpping = false;
 			isFalling = false;
