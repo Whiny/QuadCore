@@ -17,7 +17,7 @@ public class PlayerControl : MonoBehaviour
 	private float speed, jump; // 플레이어 이동 변수
 	private float power;
 	private bool isPlaying;
-	private bool isJumpping,isAttack; // 조작 상태 변수
+	private bool isJumpping,isAttack, isTriggerOn; // 조작 상태 변수
 	private bool isCharging, isCharged, isStunned, isFalling; // 행동 상태 변수
 	//public bool isIgnored;	
 
@@ -33,7 +33,7 @@ public class PlayerControl : MonoBehaviour
 		//isIgnored = true;
 
 		timer_Charging = timer_Stun = 0;
-		isJumpping = isAttack = false;
+		isJumpping = isAttack = isTriggerOn = false;
 		isCharging = isCharged = isStunned = isFalling = false;
 	}
 
@@ -53,7 +53,7 @@ public class PlayerControl : MonoBehaviour
 	
 	void FixedUpdate ()
 	{
-		Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
+		//Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
 
 		if ((GetComponent<Rigidbody2D>().velocity.y < -2) && !isFalling) isFalling = true;
 
@@ -99,10 +99,12 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
-		if ((jump_Count < jump_MAX) && Input.GetButtonDown(p_Name + "_B Button"))
+		/* 점프 */
+		if ((jump_Count < jump_MAX) && (Input.GetButtonDown(p_Name + "_B Button") || (Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn)))
 		{
 			//isJumpping = true;
 			//isIgnored = true;
+			isTriggerOn = true;
 			anim.SetBool(p_Name + "_Jump", true);
 			anim.SetBool(p_Name + "_Walk", false);
 			jump_Count++;
@@ -111,6 +113,8 @@ public class PlayerControl : MonoBehaviour
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 			//Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
 		}
+
+		if (isTriggerOn && Input.GetAxis(p_Name + "_Triggers") < 0.5f) isTriggerOn = false;
 	}
 
 	private void Move()
