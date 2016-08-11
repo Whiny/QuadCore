@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerAttack : MonoBehaviour
 {
 	public GameObject root_Object;
+	public string p_Name;
 
 	private float delay;
 	private bool isEnable;
@@ -17,19 +18,19 @@ public class PlayerAttack : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate()
 	{
-		if (delay >= 0.25)
+		if (delay >= 0.15f)
 		{
 			isEnable = false;
 			delay = 0;
 			root_Object.GetComponent<PlayerControl>().IsAttack = false;
 		}
 
-		else if (delay >= 0.15f)
+		else if (delay >= 0.05f)
 		{
 			this.GetComponent<PolygonCollider2D>().enabled = false;
 			root_Object.GetComponent<PlayerControl>().Power = 4;
 
-			root_Object.GetComponent<PlayerControl>().anim.SetBool("P1_Attack", false);
+			root_Object.GetComponent<PlayerControl>().anim.SetBool(p_Name + "_Attack", false);
 		}
 
 		if (isEnable) delay += Time.deltaTime;

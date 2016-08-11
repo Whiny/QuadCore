@@ -66,7 +66,7 @@ public class PlayerControl : MonoBehaviour
 		else
 		{
 			isStunned = false;
-			anim.SetBool("P1_Damaged", false);
+			anim.SetBool(p_Name + "_Damaged", false);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class PlayerControl : MonoBehaviour
 				Attack();
 
 				isCharged = false;
-				anim.SetBool("P1_Charged", false);
+				anim.SetBool(p_Name + "_Charged", false);
 			}
 		}
 
@@ -99,26 +99,29 @@ public class PlayerControl : MonoBehaviour
 		{
 			isJumpping = true;
 			isIgnored = true;
-			anim.SetBool("P1_Jump", true);
-			anim.SetBool("P1_Walk", false);
+			anim.SetBool(p_Name + "_Jump", true);
+			anim.SetBool(p_Name + "_Walk", false);
 
 			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
-			Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
+			//Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
 		}
 	}
 
 	private void Move()
 	{
 		float tempValue = 0;
-		int value = -1; // -1 : 왼쪽, 0 : 정지, 1 : 오른쪽
+		int value = -10; // -1 : 왼쪽, 0 : 정지, 1 : 오른쪽
 
+		/* 조이스틱 입력 */
 		if (p_Name != "P0") tempValue = Input.GetAxis(p_Name + "_LeftThumbstickButton");
+
+		/* 키보드 입력 */
 		else
 		{
-			if (Input.GetAxis(p_Name + "_Horizontal") > 0) value = 1;
-			else if (Input.GetAxis(p_Name + "_Horizontal") < 0) value = -1;
-			else value = 0;
+			if (Input.GetAxis(p_Name + "_LeftThumbstickButton") > 0.05) value = 1; // 오른쪽 이동
+			else if (Input.GetAxis(p_Name + "_LeftThumbstickButton") < -0.05) value = -1; // 왼족 이동
+			else value = 0; // 정지
 		}
 
 		/* 키 입력 <오른쪽 이동> */
@@ -130,7 +133,7 @@ public class PlayerControl : MonoBehaviour
 			direction = 1;
 			angle = 0;
 
-			if (!isJumpping) anim.SetBool("P1_Walk", true);
+			if (!isJumpping) anim.SetBool(p_Name + "_Walk", true);
 		}
 
 		/* 키 입력 <왼쪽 이동> */
@@ -142,14 +145,14 @@ public class PlayerControl : MonoBehaviour
 			direction = -1;
 			angle = 180;
 
-			if (!isJumpping) anim.SetBool("P1_Walk", true);
+			if (!isJumpping) anim.SetBool(p_Name + "_Walk", true);
 		}
 
 		/* 정지 상태 */
 		else
 		{
 			direction = 0;
-			anim.SetBool("P1_Walk", false);
+			anim.SetBool(p_Name + "_Walk", false);
 		}
 
 		GetComponent<Rigidbody2D>().velocity = new Vector2(direction * speed, GetComponent<Rigidbody2D>().velocity.y);
@@ -159,15 +162,15 @@ public class PlayerControl : MonoBehaviour
 	private void Attack()
 	{
 		m_AttackCollider.GetComponent<PolygonCollider2D>().enabled = true;
-		anim.SetBool("P1_Attack", true);
+		anim.SetBool(p_Name + "_Attack", true);
 
 		m_AttackCollider.GetComponent<PlayerAttack>().DelayOn();
 	}
 
 	public void Damaged(float _power, int _direction)
 	{
-		anim.SetBool("P1_Damaged", true);
-		anim.SetBool("P1_Charged", false);
+		anim.SetBool(p_Name + "_Damaged", true);
+		anim.SetBool(p_Name + "_Charged", false);
 		isStunned = true;
 		isCharged = false;
 		isCharging = false;
@@ -193,7 +196,7 @@ public class PlayerControl : MonoBehaviour
 		if (col.gameObject.tag == "Ground" && isJumpping)
 		{
 			isJumpping = false;
-			anim.SetBool("P1_Jump", false);
+			anim.SetBool(p_Name + "_Jump", false);
 		}
 	}
 
