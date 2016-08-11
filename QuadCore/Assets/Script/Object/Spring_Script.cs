@@ -29,9 +29,8 @@ public class Spring_Script : Object
         {
             IsPlayerOn = true;
             animator.SetBool("isPlayerOn", IsPlayerOn);
-            //Rigidbody2D otherRigid = other.transform.gameObject.GetComponent<Rigidbody2D>();
-            Rigidbody2D otherRigid = other.transform.GetComponentInParent<Rigidbody2D>();
-            otherRigid.velocity = new Vector2(0, 0);
+            Rigidbody2D otherRigid = other.transform.gameObject.GetComponentInParent<Rigidbody2D>();
+			otherRigid.velocity = new Vector2(0, 0);
 
             Vector2 direction = new Vector2(Mathf.Cos(transform.rotation.z + 90 * Mathf.Deg2Rad), Mathf.Sin(transform.rotation.z + 90 * Mathf.Deg2Rad));
             // 주의점 transform.rotation.z 은 라디안 값을 반환한다.
