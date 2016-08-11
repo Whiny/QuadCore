@@ -8,31 +8,33 @@ public class PlayerControl : MonoBehaviour
 	public Animator anim;
 	public GameObject m_AttackCollider, m_DefaultCollider;
 	public GameObject m_Camera;
+	public int angle;
 
-	private GameObject temp_Collider;
-	private int angle;
+	//private GameObject temp_Collider;
 	private int direction; // 플레이어 방향값
+	private int jump_MAX, jump_Count;
 	private float timer_Charging, timer_Stun; // 타이머
 	private float speed, jump; // 플레이어 이동 변수
 	private float power;
 	private bool isPlaying;
 	private bool isJumpping,isAttack; // 조작 상태 변수
-	private bool isCharging, isCharged, isStunned; // 행동 상태 변수
-	public bool isIgnored;	
+	private bool isCharging, isCharged, isStunned, isFalling; // 행동 상태 변수
+	//public bool isIgnored;	
 
 	void Start ()
 	{
-		power = 4f;
+		jump_MAX = 3;
+		jump_Count = 0;
 
-		angle = 0;
+		power = 4f;
 		speed = 2;
 		jump = 6;
 		isPlaying = true;
-		isIgnored = true;
+		//isIgnored = true;
 
 		timer_Charging = timer_Stun = 0;
 		isJumpping = isAttack = false;
-		isCharging = isCharged = isStunned = false;
+		isCharging = isCharged = isStunned = isFalling = false;
 	}
 
 	void Update ()
@@ -43,7 +45,7 @@ public class PlayerControl : MonoBehaviour
 		{
 			isCharged = true;
 			power *= 2;
-			anim.SetBool("P1_Charged", true);
+			anim.SetBool(p_Name + "_Charged", true);
 		}
 
 		if (isCharging) timer_Charging += Time.deltaTime;
@@ -53,12 +55,14 @@ public class PlayerControl : MonoBehaviour
 	{
 		Debug.Log(GetComponent<Rigidbody2D>().velocity.y);
 
-		if (isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0)
+		if ((GetComponent<Rigidbody2D>().velocity.y < -2) && !isFalling) isFalling = true;
+
+		/*if (isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0)
 		{
 			
 			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = true;
 			isIgnored = false;
-		}
+		}*/
 
 		if (!isStunned) Move();
 		else if (timer_Stun > 0) timer_Stun -= Time.deltaTime;
@@ -95,14 +99,15 @@ public class PlayerControl : MonoBehaviour
 			}
 		}
 
-		if (!isJumpping && Input.GetButtonDown(p_Name + "_B Button"))
+		if ((jump_Count < jump_MAX) && Input.GetButtonDown(p_Name + "_B Button"))
 		{
-			isJumpping = true;
-			isIgnored = true;
+			//isJumpping = true;
+			//isIgnored = true;
 			anim.SetBool(p_Name + "_Jump", true);
 			anim.SetBool(p_Name + "_Walk", false);
+			jump_Count++;
 
-			m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
+			//m_DefaultCollider.GetComponent<BoxCollider2D>().enabled = false;
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 			//Physics2D.IgnoreCollision(temp_Collider.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), false);
 		}
@@ -187,15 +192,17 @@ public class PlayerControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D col)
 	{
-		if (!isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0 && col.gameObject.tag == "Ground" && isJumpping)
+		/*if (!isIgnored && GetComponent<Rigidbody2D>().velocity.y < 0 && col.gameObject.tag == "Ground" && isJumpping)
 		{
 			Physics2D.IgnoreCollision(col.gameObject.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<BoxCollider2D>(), true);
 			temp_Collider = col.gameObject;
-		}
+		}*/
 
-		if (col.gameObject.tag == "Ground" && isJumpping)
+		if (col.gameObject.tag == "Ground" && isFalling)
 		{
-			isJumpping = false;
+			//isJumpping = false;
+			jump_Count = 0;
+			isFalling = false;
 			anim.SetBool(p_Name + "_Jump", false);
 		}
 	}
