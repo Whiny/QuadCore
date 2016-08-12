@@ -6,8 +6,8 @@ public class PlayerAttack : MonoBehaviour
 	public GameObject root_Object;
 	public string p_Name;
 
-	private float delay;
-	private bool isEnable;
+	public float delay;
+	public bool isEnable;
 
 	void Start ()
 	{
@@ -30,6 +30,7 @@ public class PlayerAttack : MonoBehaviour
 			this.GetComponent<PolygonCollider2D>().enabled = false;
 			//root_Object.GetComponent<PlayerControl>().Power = 4;
 
+			Debug.Log(p_Name);
 			root_Object.GetComponent<PlayerControl>().anim.SetBool(p_Name + "_Attack", false);
 		}
 
