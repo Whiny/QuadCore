@@ -46,8 +46,8 @@ public class PlayerAttack : MonoBehaviour
 				float power = root_Object.GetComponent<PlayerControl>().Power;
 				Debug.Log(power);
 
-				if (angle == 0) col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, 1);
-				else col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, -1);
+				if (angle == 0) col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, 1, "Player");
+				else col.gameObject.GetComponentInParent<PlayerControl>().Damaged(power, -1, "Player");
 			}
 		}
 	}

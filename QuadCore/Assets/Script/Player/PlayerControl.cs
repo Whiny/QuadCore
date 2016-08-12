@@ -186,7 +186,7 @@ public class PlayerControl : MonoBehaviour
 		m_AttackCollider.GetComponent<PlayerAttack>().DelayOn();
 	}
 
-	public void Damaged(float _power, int _direction)
+	public void Damaged(float _Power, int _Direction, string _From)
 	{
 		anim.SetBool(p_Name + "_Charged", false);
 		anim.SetBool(p_Name + "_Damaged", true);
@@ -194,8 +194,20 @@ public class PlayerControl : MonoBehaviour
 		isCharged = false;
 		isCharging = false;
 
-		timer_Stun = _power * 0.25f;
-		GetComponent<Rigidbody2D>().velocity = new Vector2(_direction * _power, 1 * _power);
+		timer_Stun = _Power * 0.25f;
+		GetComponent<Rigidbody2D>().velocity = new Vector2(_Direction * _Power, 1 * _Power);
+
+		if(_From == "Spike")
+		{
+			m_DetectCollider.GetComponent<DetectGround>().Reset();
+			isIgnored = false;
+			isTriggerOn = true;
+			isJumpping = true;
+			anim.SetBool(p_Name + "_Jump", true);
+			anim.SetBool(p_Name + "_Walk", false);
+
+			m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = false;
+		}
 
 		///Debug.Log(_direction * _power);
 

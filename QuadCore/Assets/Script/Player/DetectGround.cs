@@ -27,6 +27,7 @@ public class DetectGround : MonoBehaviour
 				Physics2D.IgnoreCollision(temp_Collider.GetComponent<PolygonCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), false);
 
 		}
+
 		temp_Collider = null;
 	}
 
