@@ -8,11 +8,13 @@ public class DetectGround : MonoBehaviour
 
 	private List<GameObject> list_Ground;
 	private float timer_DefaultCollider;
+	private bool isCollision;
 
 	void Start ()
 	{
 		list_Ground = new List<GameObject>();
 		timer_DefaultCollider = 1;
+		isCollision = false;
 	}
 	
 	void FixedUpdate ()
@@ -23,8 +25,6 @@ public class DetectGround : MonoBehaviour
 		{
 			for (int i = 0; i < list_Ground.Count; i++)
 			{
-				Debug.Log(list_Ground[i].name);
-
 				if (list_Ground[i].GetComponent<BoxCollider2D>() != null)
 					Physics2D.IgnoreCollision(list_Ground[i].GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), false);
 
@@ -61,6 +61,7 @@ public class DetectGround : MonoBehaviour
 	{
 		if (col.gameObject.tag == "Ground")
 		{
+			isCollision = true;
 			list_Ground.Add(col.gameObject);
 
 			if (col.GetComponent<PolygonCollider2D>() != null)
@@ -68,6 +69,19 @@ public class DetectGround : MonoBehaviour
 
 			else if (col.GetComponent<BoxCollider2D>() != null)
 				Physics2D.IgnoreCollision(col.GetComponent<BoxCollider2D>(), m_DefaultCollider.GetComponent<PolygonCollider2D>(), true);
+		}
+	}
+
+	public bool IsCollision
+	{
+		get
+		{
+			return isCollision;
+		}
+
+		set
+		{
+			isCollision = value;
 		}
 	}
 }
