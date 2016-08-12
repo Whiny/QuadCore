@@ -105,7 +105,7 @@ public class PlayerControl : MonoBehaviour
 		}
 
 		/* 점프 */
-		if ((jump_Count < jump_MAX) && (Input.GetButtonDown(p_Name + "_B Button") || (Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn)))
+		if ((jump_Count < jump_MAX) && (Input.GetButtonDown(p_Name + "_B Button") || ((p_Name != "P0") && Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn)))
 		{
 			m_DetectCollider.GetComponent<DetectGround>().Reset();
 			isIgnored = false;
@@ -118,7 +118,7 @@ public class PlayerControl : MonoBehaviour
 			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 		}
 
-		if (isTriggerOn && Input.GetAxis(p_Name + "_Triggers") < 0.5f) isTriggerOn = false;
+		if ((p_Name != "P0") && isTriggerOn && Input.GetAxis(p_Name + "_Triggers") < 0.5f) isTriggerOn = false;
 	}
 
 	private void Move()
