@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Portal_Script : Object
+public class Portal_Script : Collider_Object
 {
     public Transform red; // 빨간색 문
     public Transform green; // 초록색 문
@@ -21,12 +21,12 @@ public class Portal_Script : Object
         isExit = false;
         redColider = gameObject.AddComponent<BoxCollider2D>();
         redColider.size = new Vector2(0.277f, 0.35f);
-        redColider.offset = red.position;
+        redColider.offset = red.localPosition;
         redColider.isTrigger = true;
 
         greenColider = gameObject.AddComponent<BoxCollider2D>();
         greenColider.size = new Vector2(0.277f, 0.35f);
-        greenColider.offset = green.position;
+        greenColider.offset = green.localPosition;
         greenColider.isTrigger = true;
     }
 

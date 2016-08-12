@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Spring_Script : Object
+public class Spring_Script : Collision_Object
 {
     public Animator animator;
     public float force;
@@ -23,7 +23,7 @@ public class Spring_Script : Object
         }
     }
 
-    protected override void Active(Collider2D other)
+    protected override void Active(Collision2D other)
     {
         if (!IsPlayerOn)
         {
@@ -37,7 +37,7 @@ public class Spring_Script : Object
 
             otherRigid.AddForce(direction * force, ForceMode2D.Force);
 			// 넹
-			other.GetComponentInParent<PlayerControl>().Jump(true);
+			other.collider.GetComponentInParent<PlayerControl>().Jump(true);
         }      
     }
 }

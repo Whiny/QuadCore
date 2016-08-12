@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Object : MonoBehaviour
+public abstract class Collider_Object : MonoBehaviour 
 {
-    private bool isPlayerOn; public bool IsPlayerOn{ get{return isPlayerOn;} set{ isPlayerOn = value;}} // 플레이어 충돌?
+    private bool isPlayerOn; public bool IsPlayerOn { get { return isPlayerOn; } set { isPlayerOn = value; } } // 플레이어 충돌?
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {

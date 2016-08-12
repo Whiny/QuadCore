@@ -164,19 +164,20 @@ public class GridEditor : Editor
             }
         }
 
-        if (e.isMouse & e.type == EventType.MouseDown && (e.button == 0 || e.button == 1))
+        if ((e.isMouse & e.type == EventType.MouseDown && (e.button == 0 || e.button == 1))) // 눌렀을 때 이벤트
         {
             GUIUtility.hotControl = controlId;
             e.Use();
             Vector3 aligned = new Vector3(Mathf.Floor(mousePos.x / grid.width) * grid.width + grid.width / 2.0f, Mathf.Floor(mousePos.y / grid.height) * grid.height + grid.height / 2.0f, 0.0f);
             Transform transform = GetTransformFromPosition(aligned);
-            if (transform != null)
+
+            if (transform != null) // 삭제
             {
                 DestroyImmediate(transform.gameObject);
             }
         }
 
-        if ((e.isMouse && e.type == EventType.MouseUp && (e.button == 0 || e.button == 1)))
+        if ((e.isMouse && e.type == EventType.MouseUp && (e.button == 0 || e.button == 1)))  // 손 땠을 때 이벤트
         {
             if (grid.draggable && e.button == 0)
             {
@@ -237,7 +238,7 @@ public class GridEditor : Editor
         {
             Vector3 tmp = new Vector3();
             tmp = _EndPosition;
-            _StartPosition = _EndPosition;
+            _StartPosition.x = _EndPosition.x;
             _EndPosition = tmp;
         }
         // swap to fill from up to down
@@ -245,7 +246,7 @@ public class GridEditor : Editor
         {
             Vector3 tmp = new Vector3();
             tmp = _EndPosition;
-            _StartPosition = _EndPosition;
+            _StartPosition.y = _EndPosition.y;
             _EndPosition = tmp;
         }
        
@@ -268,9 +269,7 @@ public class GridEditor : Editor
                 GameObject gameObject;
 
                 realWorldPosition.x = _StartPosition.x + (currentXTileNumber * grid.width) + grid.width / 2.0f;
-                realWorldPosition.y = _StartPosition.y + (currentYTileNumber * grid.height) + grid.height / 2.0f;
-
-                
+                realWorldPosition.y = _StartPosition.y + (currentYTileNumber * grid.height) + grid.height / 2.0f;              
                
                 realWorldPosition.z = 0.0f;
 
@@ -285,10 +284,16 @@ public class GridEditor : Editor
             ++currentXTileNumber;
         } while (currentXTileNumber < numberOfTilesToFill.x);
     }
- 
 }
+
 //      맵 제작을 쉽게 하기 위해 맵 에디터를 인터넷에 찾아보면서 만들어 봤습니다.
-//      사용법은 GridEditor 스크립트를 Map이라는 빈오브젝트에 넣어 TileSet을 넣으신 후 프리팹을 골라서 마우스로 눌러서 
+//      사용법은 Grid 스크립트를 Map이라는 빈오브젝트에 넣어 TileSet을 넣으신 후 프리팹을 골라서 마우스로 눌러서 
 //      맵을 만들 수 있습니다 참고로 TileSet은 TileSet 폴더에서 오른쪽 클릭해서 TileSet을 눌러 만들 수 있습니다 
 //      프리팹으로 세트를 채워 넣으시면 한개에 사용할 수 있는 세트를 만들 수 있습니다. 잘 모르시거나 맵 에디터에 추가 사항은 메시지로 문의 해주세요 by sounghoo
 //      ps. 그리드 칸의 크기는 최상위 부모의 이미지의 크기에 맟춰집니다.
+//      pss. 간단하게 Map 이라는 프리팹 쓰세요
+//      psss. 특정칸에 드래그가 이상하게 되는 버그가 있습니다 이유를 찾아내시는 분은 감사합니다.
+
+//      개선 해야할 사항 1. 만들기 전에 색깔 칸으로 표시로 이용 편하게
+//      개선 해야할 사항 2. 드래그 모드에선 타일 겹치기가 가능한 문제
+//      개선 해야할 사항 3. 위에서 언급한 특정칸에서 드래그 모드 버그

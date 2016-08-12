@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ExplosiveObject : Object 
+public class ExplosiveObject : Collision_Object 
 {
     public float limitTime;  // 제한 시간
 
@@ -17,7 +17,7 @@ public class ExplosiveObject : Object
         }
     }
 
-    protected override void Active(Collider2D other)
+    protected override void Active(Collision2D other)
     {
         IsPlayerOn = true;
     }
