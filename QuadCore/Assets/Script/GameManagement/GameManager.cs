@@ -19,11 +19,25 @@ public class GameManager : MonoBehaviour
 		int count = 0;
 		int winner = -1;
 		//혹시나 에러 날까봐(사실은 그냥 써보고 싶어서)
-		try { index = Convert.ToInt16(p_Name[1]); }
+		/*try { index = Convert.ToInt16(p_Name[1]); Debug.Log(index); }
 		finally{ Debug.Log("Index Error"); index = -1; }
 
+		Debug.Log(p_Name);
+		Debug.Log(index);*/
+
+		if (p_Name == "P0")
+			index = 0;
+		else if (p_Name == "P1")
+			index = 1;
+		else if (p_Name == "P2")
+			index = 2;
+		else if (p_Name == "P3")
+			index = 3;
+		else
+			index = -1;
+
 		//에러면 게임 종료
-		if (index == -1) { GameOver(-1); return; }
+		if (index == -1) { StartCoroutine("GameOver", -1); return; }
 
 		isPlaying[index] = false;
 
@@ -36,15 +50,15 @@ public class GameManager : MonoBehaviour
 			}
 		}
 
-		if (count == 1) { GameOver(winner); }
+		if (count == 1) { StartCoroutine("GameOver", winner); }
 		else if (count < 1) { return; }
     }
-	private void GameOver(int winner)
+	private IEnumerator GameOver(int winner)
 	{
 		if (winner > 3 || winner < 0)
 		{
 			Debug.Log("Winner Number Error");
-			GameObject.Find("/Canvas/Text").GetComponent<Text>().text = "It's Error";
+			GameObject.Find("Canvas/Text").GetComponent<Text>().text = "It's Error";
 		}
 		else
 		{
@@ -58,9 +72,10 @@ public class GameManager : MonoBehaviour
 			else // winner == 0
 				playerColor = "Blue";
 			//게임에서 승리한 플레이어의 카메라를 전체로 확대하고 승리문구 출력
-			GameObject.Find("Player " + playerColor).GetComponentInChildren<Camera>().rect = new Rect (0, 0, 1, 1);
-			GameObject.Find("/Canvas/Text").GetComponent<Text>().text = winner + " Palyer\nWin!";
+			GameObject.Find("Player " + playerColor).GetComponentInChildren<Camera>().rect = new Rect(0, 0, 1, 1);
+			GameObject.Find("Canvas/Text").GetComponent<Text>().text = playerColor + " Player\nWin!";
 		}
+		GameObject.Find("Canvas/Text").GetComponent<Text>().enabled = true;
 
 		yield return new WaitForSeconds(5);
 
