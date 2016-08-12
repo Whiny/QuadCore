@@ -51,16 +51,18 @@ public class PlayerControl : MonoBehaviour
 	
 	void FixedUpdate ()
 	{
-		if (time_Detect > 0.2f)
+		if (time_Detect > 0.1f)
 		{
-			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = false;
+			if (!m_DetectCollider.GetComponent<DetectGround>().IsCollision) m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = false;
+
 			m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = true;
 			time_Detect = 0;
 		}
 
 		if ((GetComponent<Rigidbody2D>().velocity.y < 0) && !isIgnored && isJumpping)
 		{
-			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = true;
+			m_DetectCollider.GetComponent<DetectGround>().Reset();
+			m_DetectCollider.GetComponent<DetectGround>().Check();
 			isIgnored = true;
 		}
 
