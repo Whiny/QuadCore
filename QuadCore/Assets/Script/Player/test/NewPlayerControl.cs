@@ -11,18 +11,18 @@ public class NewPlayerControl : MonoBehaviour
 	public int max_Jump;
 
 	//플레이어 능력치
-	private int angle;
-	private float speed;
-	private float power;
-	private float jump;
+	public float speed;	//기본 : 2
+	public float power;	//기본 : 4
+	public float jump;  //기본 : 6
 
 	//플레이어 상태 여부
+	public bool isPlaying;
+	private int angle;
 	private bool isStun;
-	private bool isPlaying;
-	public bool isJumpping;
-	public bool isFalling;
+	private bool isJumpping;
+	private bool isFalling;
 	private bool isCharging;
-	public bool isCharged;
+	private bool isCharged;
 
 	//카운터
 	private float timer_Stun;    //isStun을 대체해주길 바람
@@ -32,9 +32,6 @@ public class NewPlayerControl : MonoBehaviour
 	void Start()
 	{
 		angle = 0;
-		power = 4;
-		speed = 2;
-		jump = 6;
 
 		isJumpping = false;
 		isFalling = false;
@@ -203,6 +200,7 @@ public class NewPlayerControl : MonoBehaviour
 		}
 	}
 
+	public bool IsPlaying {get { return isPlaying; } /*set { isPlaying = value; }*/}
 	public int Angle {get{return angle;} set{angle = value;}}
 	public float Power {get {return power;} set {power = value;}}
 	public float StunTimer
