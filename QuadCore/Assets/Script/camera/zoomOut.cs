@@ -32,7 +32,7 @@ public class zoomOut : MonoBehaviour
 
     void Update()
     {
-        if (camera1.GetComponent<Camera>().orthographicSize <= finalCameraSize)
+        if (timeCheck && camera1.GetComponent<Camera>().orthographicSize <= finalCameraSize)
         {
             StartCoroutine("cameraZoomOut");
         }

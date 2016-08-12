@@ -204,6 +204,13 @@ public class PlayerControl : MonoBehaviour
 		timer_Charging = 0;
 	}
 
+	public void Die()
+	{
+		isPlaying = false;
+		transform.gameObject.SetActive(false);
+		Debug.Log(this.name);
+	}
+
 	private void OnCollisionEnter2D(Collision2D col)
 	{
 		if (col.gameObject.tag == "Ground" )
