@@ -11,17 +11,45 @@ public class zoomOut : MonoBehaviour
 
     public Camera camera4;
 
+    private bool timeCheck = true;
+
+    public float zoomSpeed = 1.0f;
+
+    public float zoomAmount = 1.0f;
+
+    public float firstCameraSize = 1.0f;
+
+    public float finalCameraSize = 5.0f;
+
     void Start ()
     {
-	
-	}
-	
-	
-	void Update ()
+        camera1.GetComponent<Camera>().orthographicSize = firstCameraSize;
+        camera2.GetComponent<Camera>().orthographicSize = firstCameraSize;
+        camera3.GetComponent<Camera>().orthographicSize = firstCameraSize;
+        camera4.GetComponent<Camera>().orthographicSize = firstCameraSize;
+    }
+
+
+    void Update()
     {
-        camera1.transform.Translate(new Vector3(camera1.transform.position.x, camera1.transform.position.y, camera1.transform.position.z - 1));
-        camera2.transform.Translate(new Vector3(camera2.transform.position.x, camera2.transform.position.y, camera2.transform.position.z - 1));
-        camera3.transform.Translate(new Vector3(camera3.transform.position.x, camera3.transform.position.y, camera3.transform.position.z - 1));
-        camera4.transform.Translate(new Vector3(camera4.transform.position.x, camera4.transform.position.y, camera4.transform.position.z - 1));
+        if (camera1.GetComponent<Camera>().orthographicSize <= finalCameraSize)
+        {
+            StartCoroutine("cameraZoomOut");
+        }
+    }
+
+    IEnumerator cameraZoomOut()
+    {
+
+        timeCheck = false;
+
+        camera1.GetComponent<Camera>().orthographicSize += zoomAmount;
+        camera2.GetComponent<Camera>().orthographicSize += zoomAmount;
+        camera3.GetComponent<Camera>().orthographicSize += zoomAmount;
+        camera4.GetComponent<Camera>().orthographicSize += zoomAmount;
+
+        yield return new WaitForSeconds(zoomSpeed);
+
+        timeCheck = true;
     }
 }
