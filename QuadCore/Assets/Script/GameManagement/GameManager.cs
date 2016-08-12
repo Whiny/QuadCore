@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 		finally{ Debug.Log("Index Error"); index = -1; }
 
 		//에러면 게임 종료
-		if (index == -1) { GameOver(index); return; }
+		if (index == -1) { GameOver(-1); return; }
 
 		isPlaying[index] = false;
 
@@ -36,10 +36,8 @@ public class GameManager : MonoBehaviour
 			}
 		}
 
-		if(count == 1)
-		{
-			GameOver(winner);
-		}
+		if (count == 1) { GameOver(winner); }
+		else if (count < 1) { return; }
     }
 	private void GameOver(int winner)
 	{
@@ -50,10 +48,21 @@ public class GameManager : MonoBehaviour
 		}
 		else
 		{
+			string playerColor;
+			if (winner == 1)
+				playerColor = "Green";
+			else if (winner == 2)
+				playerColor = "Red";
+			else if (winner == 3)
+				playerColor = "Yellow";
+			else // winner == 0
+				playerColor = "Blue";
 			//게임에서 승리한 플레이어의 카메라를 전체로 확대하고 승리문구 출력
-			//GameObject.Find(/*오브젝트 이름*/).GetComponentInChildren<Camera>().rect = new Rect (0, 0, 1, 1);
+			GameObject.Find("Player " + playerColor).GetComponentInChildren<Camera>().rect = new Rect (0, 0, 1, 1);
 			GameObject.Find("/Canvas/Text").GetComponent<Text>().text = winner + " Palyer\nWin!";
 		}
+
+		yield return new WaitForSeconds(5);
 
 		//게임 종료
 		Application.LoadLevel("MainMenu");
