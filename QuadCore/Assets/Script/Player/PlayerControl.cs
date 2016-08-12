@@ -208,6 +208,8 @@ public class PlayerControl : MonoBehaviour
 	{
 		isPlaying = false;
 		transform.gameObject.SetActive(false);
+
+		GameObject.Find("GameManager").GetComponent<GameManager>().NoticeOfDeath(p_Name);
 		Debug.Log(this.name);
 	}
 
