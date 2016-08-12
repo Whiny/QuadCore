@@ -36,7 +36,8 @@ public class Spring_Script : Object
             // 주의점 transform.rotation.z 은 라디안 값을 반환한다.
 
             otherRigid.AddForce(direction * force, ForceMode2D.Force);
-            // 넹
+			// 넹
+			other.GetComponentInParent<PlayerControl>().Jump(true);
         }      
     }
 }

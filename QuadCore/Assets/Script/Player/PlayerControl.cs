@@ -58,7 +58,7 @@ public class PlayerControl : MonoBehaviour
 			time_Detect = 0;
 		}
 
-		if ((GetComponent<Rigidbody2D>().velocity.y < 0) && !isIgnored)
+		if ((GetComponent<Rigidbody2D>().velocity.y < 0) && !isIgnored && isJumpping)
 		{
 			m_DetectCollider.GetComponent<PolygonCollider2D>().enabled = true;
 			isIgnored = true;
@@ -107,18 +107,24 @@ public class PlayerControl : MonoBehaviour
 		/* 점프 */
 		if ((jump_Count < jump_MAX) && (Input.GetButtonDown(p_Name + "_B Button") || ((p_Name != "P0") && Input.GetAxis(p_Name + "_Triggers") > 0.9f && !isTriggerOn)))
 		{
-			m_DetectCollider.GetComponent<DetectGround>().Reset();
-			isIgnored = false;
-			isTriggerOn = true;
-			anim.SetBool(p_Name + "_Jump", true);
-			anim.SetBool(p_Name + "_Walk", false);
 			jump_Count++;
-
-			m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = false;
-			GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
+			Jump(false);
 		}
 
 		if ((p_Name != "P0") && isTriggerOn && Input.GetAxis(p_Name + "_Triggers") < 0.5f) isTriggerOn = false;
+	}
+
+	public void Jump(bool isSpring)
+	{
+		m_DetectCollider.GetComponent<DetectGround>().Reset();
+		isIgnored = false;
+		isTriggerOn = true;
+		isJumpping = true;
+		anim.SetBool(p_Name + "_Jump", true);
+		anim.SetBool(p_Name + "_Walk", false);
+
+		m_DefaultCollider.GetComponent<PolygonCollider2D>().enabled = false;
+		if (!isSpring) GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
 	}
 
 	private void Move()
@@ -204,6 +210,7 @@ public class PlayerControl : MonoBehaviour
 		{
 			jump_Count = 0;
 			anim.SetBool(p_Name + "_Jump", false);
+			isJumpping = false;
 
 			m_DetectCollider.GetComponent<DetectGround>().Reset();
 		}

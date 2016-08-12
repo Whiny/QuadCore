@@ -4,7 +4,7 @@ using System.Collections;
 public class DetectGround : MonoBehaviour
 {
 	public GameObject m_DefaultCollider;
-	private GameObject temp_Collider;
+	public GameObject temp_Collider;
 
 	void Start ()
 	{
